@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: msa-ddd-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: msa_ddd
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docs/DDL.sql:/docker-entrypoint-initdb.d/DDL.sql
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d msa_ddd" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
