@@ -1,6 +1,7 @@
 package com.back.global.jpa.entity;
 
 import com.back.global.global.GlobalConfig;
+import com.back.standard.modelType.HasModelTypeCode;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
 

@@ -1,6 +1,6 @@
 package com.back.shared.post.dto;
 
-import com.back.global.jpa.entity.HasModelTypeCode;
+import com.back.standard.modelType.HasModelTypeCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
