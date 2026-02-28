@@ -3,7 +3,12 @@
     "allow": [
       "Bash(git add:*)",
       "Bash(docker compose:*)",
-      "Bash(xargs:*)"
+      "Bash(xargs:*)",
+      "Bash(git -C /Users/peter/git/msa-ddd log --oneline --since=\"2026-02-28\" --until=\"2026-02-29\")",
+      "Bash(git -C /Users/peter/git/msa-ddd log --all --oneline --graph --decorate)",
+      "Bash(git -C /Users/peter/git/msa-ddd log --pretty=format:\"%h %ad %s\" --date=short)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
     ]
   }
 }
