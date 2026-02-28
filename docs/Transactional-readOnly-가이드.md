@@ -5,7 +5,66 @@
 
 ---
 
-## 1. readOnly = true가 하는 일 (3단계)
+## 1. @Transactional 없음 vs readOnly = true (읽기 기준)
+
+### @Transactional이 없을 때
+
+```
+메서드 시작 → 트랜잭션 없음
+  → Repository 메서드 호출 → 자체 트랜잭션 생성 → 조회 → 즉시 트랜잭션 종료
+  → 엔티티가 준영속(detached) 상태
+  → Lazy Loading 불가 ❌ (LazyInitializationException)
+  → 1차 캐시 없음 ❌
+메서드 종료
+```
+
+### @Transactional(readOnly = true)가 있을 때
+
+```
+메서드 시작 → 트랜잭션 시작 → 영속성 컨텍스트 열림
+  → 엔티티 조회 (영속 상태)
+  → Lazy Loading 가능 ✅
+  → 1차 캐시 동작 (같은 엔티티 재조회 시 DB 안 감) ✅
+메서드 종료 → 트랜잭션 커밋 → 영속성 컨텍스트 닫힘
+```
+
+### 실제 예시
+
+```java
+// ✅ @Transactional(readOnly = true) 있음
+@Transactional(readOnly = true)
+public PostDto getPost(int id) {
+    Post post = postRepository.findById(id).orElseThrow();
+    post.getComments().size();  // Lazy Loading 동작 ✅
+    return post.toDto();
+}
+
+// ❌ @Transactional 없음
+public PostDto getPost(int id) {
+    Post post = postRepository.findById(id).orElseThrow();
+    post.getComments().size();  // LazyInitializationException 💥
+    return post.toDto();
+}
+```
+
+### 비교표
+
+| 항목 | `@Transactional` 없음 | `@Transactional(readOnly = true)` |
+|---|---|---|
+| 트랜잭션 | Repository 호출마다 개별 트랜잭션 | 메서드 전체가 하나의 트랜잭션 |
+| 영속성 컨텍스트 | Repository 호출 후 즉시 닫힘 | 메서드 종료까지 유지 |
+| Lazy Loading | 불가 (`LazyInitializationException`) | 가능 |
+| 1차 캐시 | 없음 (매번 DB 조회) | 동작 (같은 엔티티 재조회 시 캐시) |
+| 스냅샷 | 없음 | 없음 (readOnly라서 생략) |
+| Dirty Checking | 없음 | 없음 (readOnly라서 비활성화) |
+| DB 커넥션 점유 | 짧음 (쿼리 단위) | 메서드 동안 점유 |
+
+> **결론:** Lazy Loading과 1차 캐시가 필요한 읽기 메서드에는 반드시 `readOnly = true`를 붙인다.
+> 트랜잭션 없이도 동작하는 단건 조회가 있지만, 일관성과 안전성을 위해 붙이는 것이 관례다.
+
+---
+
+## 2. readOnly = true의 내부 최적화 (3단계)
 
 ```
 @Transactional(readOnly = true)
@@ -22,7 +81,7 @@ public Optional<Member> findById(int id) { ... }
 
 ---
 
-## 2. [1단계] Flush Mode → MANUAL
+## 3. [1단계] Flush Mode → MANUAL
 
 ### 일반 트랜잭션 (`readOnly = false`)
 
@@ -52,7 +111,7 @@ public Member findById(int id) {
 
 ---
 
-## 3. [2단계] Dirty Checking 비활성화 & 스냅샷 생략
+## 4. [2단계] Dirty Checking 비활성화 & 스냅샷 생략
 
 ### 일반 트랜잭션의 동작
 
@@ -95,7 +154,7 @@ public List<Post> findByOrderByIdDesc() {
 
 ---
 
-## 4. [3단계] JDBC 드라이버 / DB 레벨 최적화
+## 5. [3단계] JDBC 드라이버 / DB 레벨 최적화
 
 Spring은 `Connection.setReadOnly(true)`를 호출한다.
 이 힌트를 **DB 드라이버가 어떻게 활용하는지**는 드라이버마다 다르다.
@@ -141,7 +200,7 @@ Connection.setReadOnly(true)
 
 ---
 
-## 5. 프로젝트 적용 패턴
+## 6. 프로젝트 적용 패턴
 
 ### Facade에서 트랜잭션 경계 설정
 
@@ -184,7 +243,7 @@ public List<Post> findByOrderByIdDesc() { ... }
 
 ---
 
-## 6. readOnly에서 쓰기하면 어떻게 되는가?
+## 7. readOnly에서 쓰기하면 어떻게 되는가?
 
 동작이 **DB 드라이버에 따라 다르다.**
 
@@ -208,7 +267,7 @@ DB가 거부하지 않더라도, Hibernate의 FlushMode가 `MANUAL`이므로:
 
 ---
 
-## 7. 성능 차이 요약
+## 8. 성능 차이 요약
 
 | 항목 | `readOnly = false` | `readOnly = true` |
 |---|---|---|
@@ -222,7 +281,7 @@ DB가 거부하지 않더라도, Hibernate의 FlushMode가 `MANUAL`이므로:
 
 ---
 
-## 8. 언제 써야 하는가 / 쓰면 안 되는 경우
+## 9. 언제 써야 하는가 / 쓰면 안 되는 경우
 
 ### 반드시 써야 하는 경우
 
@@ -269,7 +328,7 @@ public void updateAndReturn(int id) {
 
 ---
 
-## 9. 핵심 정리
+## 10. 핵심 정리
 
 | 포인트 | 설명 |
 |---|---|
