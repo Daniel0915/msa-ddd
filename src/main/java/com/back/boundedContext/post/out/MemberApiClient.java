@@ -8,7 +8,7 @@ import org.springframework.web.client.RestClient;
 public class MemberApiClient {
     private final RestClient restClient;
 
-    public MemberApiClient(@Value("${custom.global.internalBackUrl}") RestClient internalBackUrl) {
+    public MemberApiClient(@Value("${custom.global.internalBackUrl}") String internalBackUrl) {
         this.restClient = RestClient.builder()
                                     .baseUrl(internalBackUrl + "/api/v1/member")
                                     .build();

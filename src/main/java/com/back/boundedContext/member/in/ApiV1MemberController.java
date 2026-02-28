@@ -7,12 +7,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/member/members")
 @RequiredArgsConstructor
 public class ApiV1MemberController {
     private final MemberFacade memberFacade;
 
-    @GetMapping("/radomSecureTip")
+    @GetMapping("/randomSecureTip")
     public String getRandomSecureTip() {
         return memberFacade.getRandomSecureTip();
     }

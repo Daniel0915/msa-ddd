@@ -4,7 +4,7 @@ import com.back.boundedContext.member.domain.Member;
 import com.back.boundedContext.member.out.MemberRepository;
 import com.back.global.eventPublisher.EventPublisher;
 import com.back.global.excepton.DomainException;
-import com.back.global.reData.RsData;
+import com.back.global.rsData.RsData;
 import com.back.shared.member.event.MemberJoinedEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

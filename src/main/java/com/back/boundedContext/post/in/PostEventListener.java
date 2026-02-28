@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionalEventListener;
 
-import static org.springframework.transaction.annotation.Propagation.REQUIRED;
 import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
 import static org.springframework.transaction.event.TransactionPhase.AFTER_COMMIT;
 
@@ -18,7 +17,7 @@ public class PostEventListener {
     private final PostFacade  postFacade;
 
     @TransactionalEventListener(phase = AFTER_COMMIT)
-    @Transactional(propagation = REQUIRED)
+    @Transactional(propagation = REQUIRES_NEW)
     public void handle(MemberJoinedEvent memberJoinedEvent) {
         postFacade.syncMember(memberJoinedEvent.getMember());
     }
