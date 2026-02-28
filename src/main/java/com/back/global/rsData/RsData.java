@@ -1,4 +1,4 @@
-package com.back.global.reData;
+package com.back.global.rsData;
 
 import com.back.standard.resultType.ResultType;
 import lombok.AllArgsConstructor;
