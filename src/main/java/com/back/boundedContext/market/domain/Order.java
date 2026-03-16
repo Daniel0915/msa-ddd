@@ -81,4 +81,7 @@ public class Order extends BaseIdAndTime {
         );
     }
 
+    public void cancelRequestPayment() {
+        cancelDate = LocalDateTime.now();
+    }
 }
