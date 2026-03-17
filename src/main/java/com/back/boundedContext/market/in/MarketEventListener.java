@@ -1,7 +1,9 @@
 package com.back.boundedContext.market.in;
 
 import com.back.boundedContext.market.app.MarketFacade;
+import com.back.shared.market.evnet.MarketMemberCreatedEvent;
 import com.back.shared.member.event.MemberJoinedEvent;
+import com.back.shared.member.event.MemberModifiedEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -22,5 +24,18 @@ public class MarketEventListener {
     @Retryable(maxAttempts = 3, backoff = @Backoff(delay = 5000)) // 재시도
     public void handel(MemberJoinedEvent event) {
         marketFacade.syncMember(event.getMember());
+    }
+
+    @TransactionalEventListener(phase = AFTER_COMMIT)
+    @Transactional(propagation = REQUIRES_NEW)
+    public void handle(MemberModifiedEvent event) {
+        marketFacade.syncMember(event.getMember());
+    }
+
+
+    @TransactionalEventListener(phase = AFTER_COMMIT)
+    @Transactional(propagation = REQUIRES_NEW)
+    public void handle(MarketMemberCreatedEvent event) {
+
     }
 }

@@ -1,12 +1,14 @@
 package com.back.shared.market.evnet;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @Getter
+@Builder
 public class MarketMemberDto {
     private final int           id;
     private final LocalDateTime createDate;
