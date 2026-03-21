@@ -36,6 +36,10 @@ public class MarketEventListener {
     @TransactionalEventListener(phase = AFTER_COMMIT)
     @Transactional(propagation = REQUIRES_NEW)
     public void handle(MarketMemberCreatedEvent event) {
-
+        marketFacade.createCart(event.getMember());
     }
+
+
+
+
 }

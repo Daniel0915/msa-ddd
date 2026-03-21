@@ -21,6 +21,10 @@ public class MarketSupport {
     private final CartRepository         cartRepository;
     private final OrderRepository        orderRepository;
 
+    public long countProducts() {
+        return productRepository.count();
+    }
+
     public Optional<MarketMember> findMemberByUsername(String username) {
         return marketMemberRepository.findByUsername(username);
     }
