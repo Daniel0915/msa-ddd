@@ -48,3 +48,7 @@ custom:
         secretKey: ${TOSS_PAYMENTS_SECRET_KEY:}
     product:
       payoutRate: 90
+
+ocr:
+  default-lang: kor+eng
+  tessdata-path: /opt/homebrew/share/tessdata
