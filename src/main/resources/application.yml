@@ -52,3 +52,8 @@ custom:
 ocr:
   default-lang: kor+eng
   tessdata-path: /opt/homebrew/share/tessdata
+  correction:
+    enabled: true
+    char-bigram-min-freq: 10
+    word-bigram-min-freq: 5
+    max-edit-distance: 1

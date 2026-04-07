@@ -21,6 +21,8 @@ import java.io.IOException;
 @RequiredArgsConstructor
 @Slf4j
 public class OcrUseCase {
+    private final OcrPostProcessor ocrPostProcessor;
+
     @Value("${ocr.default-lang}")
     private String defaultLang;
 
@@ -68,7 +70,9 @@ public class OcrUseCase {
             }
         }
 
-        return bestText;
+        log.info("before ocrPostProcessor text: {}", bestText);
+
+        return ocrPostProcessor.process(bestText);
     }
 
 
